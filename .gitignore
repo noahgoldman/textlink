@@ -1,3 +1,11 @@
+# Vim
+*.sw[a-z]
+
+# Virtualenv
+env
+
+*.db
+
 *.py[cod]
 
 # C extensions
