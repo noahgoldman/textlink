@@ -9,6 +9,6 @@ app = Flask(__name__)
 engine = create_engine('sqlite:///textlink.db', echo=True, convert_unicode=True)
 Base = declarative_base()
 
-session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+Session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 import views

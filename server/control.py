@@ -6,7 +6,7 @@ def runserver():
 
 def create_db():
     from textlink import Base, engine
-    from textlink.models import *
+    from textlink.models import Number, Phone, List
     Base.metadata.create_all(bind=engine)
 
 def get_arguments():

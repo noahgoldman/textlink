@@ -24,3 +24,6 @@ class List(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     phones = relationship("Phone", backref="list")
+
+    def __init__(self, name):
+        self.name = name
