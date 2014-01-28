@@ -4,6 +4,8 @@
 # Virtualenv
 env
 
+*.db
+
 *.py[cod]
 
 # C extensions

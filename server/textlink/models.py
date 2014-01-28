@@ -19,7 +19,7 @@ class Phone(Base):
 
 
 class List(Base):
-    __tablename__ == 'lists'
+    __tablename__ = 'lists'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
