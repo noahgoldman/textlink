@@ -6,12 +6,10 @@ def is_obj(obj):
 def get_dict(obj):
     assert is_obj(obj)
 
-    old_dict = obj.__dict__
     new_dict = {}
-    for key in old_dict:
-        print key
-        if key in obj.fields:
-            new_dict[key] = old_dict[key] 
+    for key in obj.fields:
+        if hasattr(obj, key):
+            new_dict[key] = getattr(obj, key)
 
     return new_dict
 
