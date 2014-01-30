@@ -5,9 +5,11 @@ from textlink import Base
 
 class Entry(Base):
     __tablename__ = 'entries'
-    mlist = Column(Integer, ForeignKey('lists.id'),primary_key=True)
-    mphone = Column(Integer, ForeignKey('phones.id'),primary_key=True)
+
     id = Column(Integer, primary_key=True)  
+    mlist = Column(Integer, ForeignKey('lists.id'), primary_key=True)
+    mphone = Column(Integer, ForeignKey('phones.id'), primary_key=True)
+
     fields = ['mlist','mphone']
     
     def __init__(self, list_, phone):
@@ -21,6 +23,7 @@ class Phone(Base):
     number = Column(Integer, unique=True)
     name = Column(String)
     textemail = Column(String)
+    entries = relationship("Entry", backref="phone")
     
     fields = ['number', 'name', 'textemail']
 

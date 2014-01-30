@@ -1,13 +1,13 @@
 import unittest
 import json
-from textlink.models import Number, Phone, List
+from textlink.models import Entry, Phone, List
 from textlink import Obj2JSON
 
 class TestObj2JSON(unittest.TestCase):
 
     def setUp(self):
         self.mlist = List("derp")
-        self.phone = Phone('derp', '12312', None)
+        self.phone = Phone('derp', '12312')
 
     def test_get_dict(self):
         dct = Obj2JSON.get_dict(self.mlist)
