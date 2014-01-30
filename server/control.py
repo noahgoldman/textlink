@@ -9,6 +9,18 @@ def create_db():
     from textlink.models import Number, Phone, List
     Base.metadata.create_all(bind=engine)
 
+def shell():
+    import readline
+    import code
+
+    var = globals().copy()
+    var.update(locals())
+    shell = code.InteractiveConsole(var)
+    shell.push("from textlink import app, Session")
+    shell.push("from textlink.models import Number, Phone, List")
+    shell.push("session = Session()")
+    shell.interact()
+
 def get_arguments():
     parser = argparse.ArgumentParser(
             description="Various server control functions")
@@ -21,6 +33,9 @@ def get_arguments():
 
     createdb_parser = subparsers.add_parser("createdb")
     createdb_parser.set_defaults(func=create_db)
+
+    shell_parser = subparsers.add_parser("shell")
+    shell_parser.set_defaults(func=shell)
 
     args = parser.parse_args()
     args.func()

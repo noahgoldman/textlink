@@ -9,7 +9,7 @@ def index():
 
 @app.route('/lists', methods=['POST'])
 def create_list():
-    name = request.args.get('name')
+    name = request.form.get('name')
     print name
     lst = List(name)
     
