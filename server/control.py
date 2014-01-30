@@ -6,7 +6,7 @@ def runserver():
 
 def create_db():
     from textlink import Base, engine
-    from textlink.models import Number, Phone, List
+    from textlink.models import Entry, Phone, List
     Base.metadata.create_all(bind=engine)
 
 def shell():
@@ -17,7 +17,7 @@ def shell():
     var.update(locals())
     shell = code.InteractiveConsole(var)
     shell.push("from textlink import app, Session")
-    shell.push("from textlink.models import Number, Phone, List")
+    shell.push("from textlink.models import Entry, Phone, List")
     shell.push("session = Session()")
     shell.interact()
 
