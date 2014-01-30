@@ -2,6 +2,7 @@ from flask import request
 
 from textlink import app, Session
 from textlink.models import Number, Phone, List
+from textlink.Obj2JSON import jsonobj
 
 @app.route('/')
 def index():
@@ -17,4 +18,4 @@ def create_list():
     session.add(lst)
     session.commit()
 
-    return str(lst.id)
+    return jsonobj(lst)
