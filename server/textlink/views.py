@@ -35,8 +35,7 @@ def add_user(list_id):
     name = request.form.get('name')
     session = Session()
     
-    phone = session.query(Phone).filter_by(number=num).all()
-    phone = phone[0]
+    phone = session.query(Phone).filter_by(number=num).one()
     if not phone:
         phone = Phone(name,num)
         session.add(phone)
@@ -45,8 +44,6 @@ def add_user(list_id):
     session.add(entry)
     session.commit()
     return jsonobj(entry)
-
-
 
 @app.route('/lists/<list_id>',methods=['POST'])
 def send_text():
