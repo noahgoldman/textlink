@@ -7,8 +7,8 @@ class Entry(Base):
     __tablename__ = 'entries'
 
     entry_id = Column(Integer, primary_key=True)  
-    mlist = Column(Integer, ForeignKey('lists.list_id'), primary_key=True)
-    mphone = Column(Integer, ForeignKey('phones.phone_id'), primary_key=True)
+    mlist = Column(Integer, ForeignKey('lists.list_id'))
+    mphone = Column(Integer, ForeignKey('phones.phone_id'))
 
     fields = ['entry_id', 'mlist','mphone']
     
