@@ -27,7 +27,6 @@ def list_list(list_id):
     es = session.query(Entry).filter_by(mlist=list_id).all()
     es = jsonobj(es)
     return es
-    return lst.name
 
 @app.route('/lists/<list_id>/add', methods=['POST']) #for Testing:
 def add_user(list_id):
