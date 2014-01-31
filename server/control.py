@@ -1,13 +1,9 @@
 import argparse
+from textlink import create_db
 
 def runserver():
     from textlink import app
     app.run(debug=True)
-
-def create_db():
-    from textlink import Base, engine
-    from textlink.models import Number, Phone, List
-    Base.metadata.create_all(bind=engine)
 
 def shell():
     import readline
@@ -17,7 +13,7 @@ def shell():
     var.update(locals())
     shell = code.InteractiveConsole(var)
     shell.push("from textlink import app, Session")
-    shell.push("from textlink.models import Number, Phone, List")
+    shell.push("from textlink.models import Entry, Phone, List")
     shell.push("session = Session()")
     shell.interact()
 

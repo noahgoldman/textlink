@@ -3,37 +3,42 @@ from sqlalchemy.orm import relationship, backref
 
 from textlink import Base
 
-class Number(Base):
-    __tablename__ = 'numbers'
+class Entry(Base):
+    __tablename__ = 'entries'
 
-    id = Column(Integer, primary_key=True)
-    number = Column(String)
+    entry_id = Column(Integer, primary_key=True)  
+    mlist = Column(Integer, ForeignKey('lists.list_id'))
+    mphone = Column(Integer, ForeignKey('phones.phone_id'))
+
+    fields = ['entry_id', 'mlist','mphone']
+    
+    def __init__(self, list_, phone):
+        self.mlist = list_
+        self.mphone = phone      
 
 class Phone(Base):
     __tablename__ = 'phones'
 
-    id = Column(Integer, primary_key=True)
-    number = Column(Integer, ForeignKey('numbers.id'))
-    mlist = Column(Integer, ForeignKey('lists.id'))
+    phone_id = Column(Integer, primary_key=True)
+    number = Column(Integer, unique=True)
     name = Column(String)
+    textemail = Column(String)
+    entries = relationship("Entry", backref="phone")
+    
+    fields = ['phone_id', 'number', 'name', 'textemail']
 
-    fields = ['number', 'name']
-
-    def __init__(self, name, number, lst):
+    def __init__(self, name, number):
         self.name = name
         self.number = number
-        if lst is not None:
-            self.mlist = lst.id
-
 
 class List(Base):
     __tablename__ = 'lists'
 
-    id = Column(Integer, primary_key=True)
+    list_id = Column(Integer, primary_key=True)
     name = Column(String)
-    phones = relationship("Phone", backref="list")
+    entries = relationship("Entry", backref="list")
 
-    fields = ['name']
+    fields = ['list_id', 'name']
 
     def __init__(self, name):
         self.name = name
