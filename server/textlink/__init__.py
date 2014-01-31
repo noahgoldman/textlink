@@ -3,7 +3,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+from textlink.config import load_config
+
 app = Flask(__name__)
+load_config(app)
 
 # SQLAlchemy
 engine = create_engine('sqlite:///textlink.db', echo=True, convert_unicode=True)
