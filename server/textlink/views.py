@@ -59,3 +59,15 @@ def send_text():
     print message
     for phone in lst.phones:
         text_by_email(phone.number, sender, message, phone.textemail)
+
+@app.route('/lists/<list_id>',methods=['POST'])
+def send_text_Twilio():
+    name = request.form.get('name')
+    sender = request.form.get('sender')
+    print sender
+    message = request.form.get('message')
+    lst = List(name)
+    #attachments = request.form.get('attachments')
+    print message
+    for phone in lst.phones:
+        sendSM("AC0955b5ae6e4e14861d9e1f61e7d0680f","2dc773f8f669503c2dd6021d8b7bf5b7", sender, phone.number, message)
