@@ -3,7 +3,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from textlink import app, Session
 from textlink.models import Entry, Phone, List
 from textlink.Obj2JSON import jsonobj
-from textlink.sendByTwilio import sendSMS
+from textlink.sources.sendByTwilio import sendSMS
 
 @app.route('/')
 def index():

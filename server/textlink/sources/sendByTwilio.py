@@ -1,6 +1,5 @@
 from twilio.rest import TwilioRestClient
 
-
 def sendSMS(sid, tok, sender, reciever, msg):
     account_sid = sid
     auth_token  = tok
