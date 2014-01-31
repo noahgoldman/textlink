@@ -9,7 +9,7 @@ app = Flask(__name__)
 load_config(app)
 
 # SQLAlchemy
-engine = create_engine('sqlite:///textlink.db', echo=True, convert_unicode=True)
+engine = create_engine(app.config['DATABASE_URI'], echo=True, convert_unicode=True)
 Base = declarative_base()
 
 Session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))

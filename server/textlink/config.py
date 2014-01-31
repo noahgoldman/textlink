@@ -20,4 +20,4 @@ class Config(object):
     DATABASE_URI = 'sqlite://textlink.db'
 
 class Testing(Config):
-    DATABASE_URI = 'sqlite://:memory:'
+    DATABASE_URI = 'sqlite://'

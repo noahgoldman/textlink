@@ -14,7 +14,6 @@ def index():
 @API
 def create_list():
     name = request.form.get('name')
-    print name
     lst = List(name)
     
     session = Session()
