@@ -20,7 +20,7 @@ providers = ['%s@message.alltel.com',
 '%s@txt.windmobile.ca']
 
 def find_email_gateway(_to):
-    nop
+    return ""
     
 
 
@@ -47,4 +47,4 @@ def text_by_email(_to,_from,_message, carrier_email = '', attachment = 0):
         print "FAILURE"
         return -1
 
-text_by_email("8023422051", "micmoo@me.com","Things and Stuff")
+#   text_by_email("8023422051", "micmoo@me.com","Things and Stuff")

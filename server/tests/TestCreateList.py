@@ -19,5 +19,8 @@ class TestCreateList(unittest.TestCase):
         res_list = json.loads(res.data)
         assert res_list["name"] == list_name
 
+    def test_add_entry_to_list(self):
+        pass
+        
     def tearDown(self):
         pass

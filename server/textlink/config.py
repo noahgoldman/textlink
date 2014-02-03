@@ -17,7 +17,7 @@ def load_config(app):
 class Config(object):
     DEBUG = True
     TESTING = True
-    DATABASE_URI = 'sqlite://textlink.db'
+    DATABASE_URI = 'sqlite:///textlink.db'
 
 class Testing(Config):
-    DATABASE_URI = 'sqlite://'
+    DATABASE_URI = 'sqlite:///'
