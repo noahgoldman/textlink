@@ -48,7 +48,7 @@ def add_user(list_id):
     return jsonobj(entry)
 
 @app.route('/lists/<list_id>',methods=['POST'])
-def send_text():
+def send_text(list_id):
     name = request.form.get('name')
     sender = request.form.get('sender')
     print sender
