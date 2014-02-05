@@ -25,7 +25,7 @@ class Phone(Base):
     __tablename__ = 'phones'
 
     phone_id = Column(Integer, primary_key=True)
-    number = Column(Integer, unique=True)
+    number = Column(String, unique=True)
     name = Column(String)
     textemail = Column(String)
     entries = relationship("Entry", backref="phone")
