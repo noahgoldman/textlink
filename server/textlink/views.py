@@ -23,7 +23,16 @@ def create_list():
     session.commit()
 
     return jsonobj(lst)
+
+#Returns a list of all the Lists in the db
+@app.route('/lists/getAll', methods=['GET']) #for Testing:
+def getLists():
+    session = Session()
+    es = session.query(List).all()
+    es = jsonobj(es)
+    return es
     
+#Gets all entries in a list
 @app.route('/lists/<list_id>', methods=['GET']) #for Testing:
 def list_list(list_id):
     session = Session()
@@ -31,7 +40,7 @@ def list_list(list_id):
     es = jsonobj(es)
     return es
     
-
+#Adds an entry to a list
 @app.route('/lists/<list_id>/add', methods=['POST']) #for Testing:
 def add_user(list_id):
     #Need to not allow multiples.
