@@ -11,3 +11,4 @@ Setup
 2. Run pip install -r requirements.txt in the server/ directory.
 3. Create a database with "python control.py createdb"
 4. Run the server with "python control.py runserver"
+
