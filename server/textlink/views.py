@@ -24,6 +24,39 @@ def create_list():
 
     return jsonobj(lst)
 
+#Gets all Phones
+@app.route('/entries/getAll', methods=['GET']) #for Testing:
+def getAllEntries():
+    session = Session()
+    es = session.query(Entry).all()
+    es = jsonobj(es)
+    return es
+
+#Gets all Phones
+@app.route('/phones/getAll', methods=['GET']) #for Testing:
+def getAllPhones():
+    session = Session()
+    es = session.query(Phone).all()
+    es = jsonobj(es)
+    return es
+
+#Takes a phone ID and tells you all the entries it is in
+#I think this will be useful because you can find out what lists a specific phone is in
+@app.route('/phones/<phone_id>/allEntries', methods=['GET']) #for Testing:
+def getPhoneEntries(phone_id):
+    session = Session()
+    es = session.query(Entry).filter_by(phone_id=phone_id).all()
+    es = jsonobj(es)
+    return es
+
+#Gets name and number based on phone_id
+@app.route('/phones/<phone_id>', methods=['GET']) #for Testing:
+def getPhoneInfo(phone_id):
+    session = Session()
+    es = session.query(Phone).filter_by(phone_id=phone_id).all()
+    es = jsonobj(es)
+    return es
+
 #Returns a list of all the Lists in the db
 @app.route('/lists/getAll', methods=['GET']) #for Testing:
 def getLists():
