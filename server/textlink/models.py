@@ -16,6 +16,7 @@ class Entry(Base):
 
     
     fields = ['entry_id', 'list_id','phone_id']
+
     def __init__(self, lid, pid):
         self.list_id = lid
         self.phone_id = pid

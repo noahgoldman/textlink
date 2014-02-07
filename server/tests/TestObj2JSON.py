@@ -53,3 +53,6 @@ class TestObj2JSON(unittest.TestCase):
         lst = json.loads(json_data)
 
         assert len(lst) is 2
+
+    def tearDown(self):
+        pass
