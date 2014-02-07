@@ -41,5 +41,13 @@ class TestCreateList(unittest.TestCase):
         data_list = session.query(List).get(res_list["list_id"])
         assert data_list.name == list_name2
 
+    def test_create_existing_list(self):
+        list_name = "TestRunner" # A name in fixtures.py
+        res = self.app.post('/lists', data=dict(
+            name=list_name,
+        ))
+
+        assert res.status_code == 200
+
     def tearDown(self):
         drop_db()
