@@ -4,6 +4,4 @@ python:
     - "pypy"
 install:
     - pip install -r server/requirements.txt
-env:
-    - TEXTLINK_CONFIG=TESTING
 script: nosetests server
