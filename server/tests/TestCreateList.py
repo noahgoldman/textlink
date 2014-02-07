@@ -3,15 +3,9 @@ import json
 
 from textlink import app, create_db, Session, drop_db
 from textlink.models import List, Entry, Phone
-import fixtures
+from tests import TextlinkTestCase
 
-class TestCreateList(unittest.TestCase):
-
-    def setUp(self):
-        self.app = app.test_client()
-        create_db()
-        session = Session()
-        fixtures.basic_data(session)
+class TestCreateList(TextlinkTestCase):
 
     def test_create_list(self):
         list_name = "TestList"
@@ -48,6 +42,3 @@ class TestCreateList(unittest.TestCase):
         ))
 
         assert res.status_code == 200
-
-    def tearDown(self):
-        drop_db()

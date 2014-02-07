@@ -2,8 +2,9 @@ import unittest
 import json
 from textlink.models import Entry, Phone, List
 from textlink import Obj2JSON
+from tests import TextlinkTestCase
 
-class TestObj2JSON(unittest.TestCase):
+class TestObj2JSON(TextlinkTestCase):
 
     def setUp(self):
         self.mlist = List("derp")
