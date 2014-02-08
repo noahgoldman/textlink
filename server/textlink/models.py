@@ -16,6 +16,7 @@ class Entry(Base):
 
     
     fields = ['entry_id', 'list_id','phone_id']
+
     def __init__(self, lid, pid):
         self.list_id = lid
         self.phone_id = pid
@@ -41,7 +42,7 @@ class Phone(Base):
     __tablename__ = 'phones'
 
     phone_id = Column(Integer, primary_key=True)
-    number = Column(Integer, unique=True)
+    number = Column(String, unique=True)
     name = Column(String)
     textemail = Column(String)
     entries = relationship("Entry", backref="phone")

@@ -17,6 +17,10 @@ def shell():
     shell.push("session = Session()")
     shell.interact()
 
+#---------------------
+# Command Line parsing
+#---------------------
+
 def get_arguments():
     parser = argparse.ArgumentParser(
             description="Various server control functions")
