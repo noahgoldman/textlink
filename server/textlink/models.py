@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, UniqueConstraint, ForeignKeyConstraint, Index
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, UniqueConstraint, ForeignKeyConstraint, Index, Boolean
 from sqlalchemy.orm import relationship, backref
 
 from textlink import Base
@@ -20,6 +20,22 @@ class Entry(Base):
         self.list_id = lid
         self.phone_id = pid
     
+class PhoneCarrier(Base):
+    __tablename__ = 'carriers'
+    __table_args__ =  (
+            UniqueConstraint('phone_id','email'),
+            Index('phone_carrier_id','phone_id', 'email')
+    )
+    phone_carrier_id = Column(Integer, primary_key=True)
+    phone_id = Column(Integer, ForeignKey('phones.phone_id'))
+    email = Column(String) #Possible Email
+    possible = Column(Boolean, default=True)
+    
+    fields = ['phone_carrier_id', 'phone_id', 'email','possible']
+    def __init__(self, phone_id, email):
+        self.phone_id = phone_id
+        self.email = email
+    
 
 class Phone(Base):
     __tablename__ = 'phones'
@@ -29,8 +45,9 @@ class Phone(Base):
     name = Column(String)
     textemail = Column(String)
     entries = relationship("Entry", backref="phone")
+    possible_carriers = relationship("PhoneCarrier", backref="phone")
     
-    fields = ['phone_id', 'number', 'name', 'textemail']
+    fields = ['phone_id', 'number', 'name', 'textemail','possible_carriers']
 
     def __init__(self, name, number):
         self.name = name

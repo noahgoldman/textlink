@@ -2,7 +2,7 @@ from flask import request
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from textlink import app, Session
-from textlink.models import Entry, Phone, List
+from textlink.models import Entry, Phone, List, PhoneCarrier
 from textlink.Obj2JSON import jsonobj
 from textlink.helpers import API
 from textlink.sources.sendByTwilio import sendSMS
@@ -12,7 +12,7 @@ from textlink.sources.emailgateway import *
 def index():
     return "Hello World!"
 
-@app.route('/lists', methods=['POST'])
+@app.route('/lists/add', methods=['POST'])
 @API
 def create_list():
     name = request.form.get('name')
@@ -27,14 +27,41 @@ def create_list():
 @app.route('/lists/<list_id>', methods=['GET']) #for Testing:
 def list_list(list_id):
     session = Session()
-    es = session.query(Entry).filter_by(list_id=list_id).all()
-    es = jsonobj(es)
-    return es
+    try:
+        es = session.query(Entry).filter_by(list_id=list_id).all()
+    except NoresultFound:
+        return None
+    else: 
+        es = jsonobj(es)
+        return es
+
+@app.route('/phones/', methods=['GET']) #for Testing:
+def get_phones():
+    session = Session()
+    try:
+        es = session.query(Phone).all()
+    except NoresultFound:
+        return None
+    else: 
+        es = jsonobj(es)
+        return es
+    
+@app.route('/phones/<phone_id>/carriers', methods=['GET']) #for Testing:
+def get_carriers(phone_id):
+    session = Session()
+    try:
+        es = session.query(Phone).filter_by(phone_id=phone_id).one()
+    except NoresultFound:
+        return None
+    else: 
+        carriers = session.query(PhoneCarrier).filter_by(phone_id=phone_id).all()
+        return jsonobj(carriers)
+
     
 
 @app.route('/lists/<list_id>/add', methods=['POST']) #for Testing:
 def add_user(list_id):
-    #Need to not allow multiples.
+    
     num = request.form.get('number')
     name = request.form.get('name')
     session = Session()
@@ -42,10 +69,10 @@ def add_user(list_id):
     try:
         phone = session.query(Phone).filter_by(number=num).one()
     except NoResultFound:
-        phone = Phone(name,num)
-        phone.textemail = find_email_gateway(phone.number)
+        phone = Phone(name,int(num))
         session.add(phone)
         session.commit()
+        init_possible_carriers(num)
     
     entry = Entry(list_id, phone.phone_id)
     
@@ -53,18 +80,13 @@ def add_user(list_id):
         session.add(entry)
         session.commit()
     except (IntegrityError,InvalidRequestError):
-        pass
         Session.rollback()
-        entry.list_id = -1
-        entry.phone_id = -1
-        entry.entry_id = -1
-        return jsonobj(entry), "Phone already exists for this list"
+        return "Phone already exists for this list"
     else: 
         return jsonobj(entry)
 
 @app.route('/lists/<list_id>/send_email',methods=['POST'])
 def send_text(list_id):
-    name = request.form.get('name')
     sender = request.form.get('sender')
     print sender
     message = request.form.get('message')
@@ -72,8 +94,9 @@ def send_text(list_id):
     lst = session.query(List).get(list_id)
     #attachments = request.form.get('attachments')
     print message
-    for phone in lst.phones:
-        text_by_email(phone.number, sender, message, phone.textemail)
+    for phone in lst.entries:
+        
+        #text_by_email(phone.number, sender, message, phone.textemail)
 
 @app.route('/lists/<list_id>/send_twilio',methods=['POST'])
 def send_text_Twilio(list_id):

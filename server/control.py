@@ -13,7 +13,7 @@ def shell():
     var.update(locals())
     shell = code.InteractiveConsole(var)
     shell.push("from textlink import app, Session")
-    shell.push("from textlink.models import Entry, Phone, List")
+    shell.push("from textlink.models import *")
     shell.push("session = Session()")
     shell.interact()
 
