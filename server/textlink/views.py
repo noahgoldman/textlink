@@ -130,15 +130,21 @@ def add_user(list_id):
 @app.route('/lists/<list_id>/send_email',methods=['POST'])
 def send_text(list_id):
     sender = request.form.get('sender')
-    print sender
+    #print sender
     message = request.form.get('message')
     session = Session()
     lst = session.query(List).get(list_id)
     #attachments = request.form.get('attachments')
-    print message
-    for phone in lst.entries:
+    #print message
+    for ent in lst.entries:
+        print dir(ent)
+        text_by_email(ent.phone.number, sender, message, ent.phone.textemail)
         
-        #text_by_email(phone.number, sender, message, phone.textemail)
+@app.route('/lists/check_for_bounces',methods=['GET'])
+def check_for_bounces():
+    checkMailForBounce()
+    return jsonobj({})
+
 
 @app.route('/lists/<list_id>/send_twilio',methods=['POST'])
 def send_text_Twilio(list_id):
