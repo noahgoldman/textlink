@@ -12,7 +12,7 @@ from textlink.sources.emailgateway import *
 def index():
     return "Hello World!"
 
-@app.route('/lists/add', methods=['POST'])
+@app.route('/lists', methods=['POST'])
 @API
 def create_list():
     name = request.form.get('name')
