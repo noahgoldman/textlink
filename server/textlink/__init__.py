@@ -14,7 +14,7 @@ Base = declarative_base()
 
 Session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
-import views
+from views import api, web
 
 def create_db():
     Base.metadata.create_all(bind=engine)

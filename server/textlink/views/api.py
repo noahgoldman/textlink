@@ -8,10 +8,6 @@ from textlink.helpers import API
 from textlink.sources.sendByTwilio import sendSMS
 from textlink.sources.emailgateway import *
 
-@app.route('/')
-def index():
-    return "Hello World!"
-
 @app.route('/lists', methods=['POST'])
 @API
 def create_list():
