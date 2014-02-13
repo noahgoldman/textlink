@@ -11,6 +11,7 @@ from textlink.sources.emailgateway import *
 @app.route('/lists', methods=['POST'])
 @API
 def create_list():
+    """Creates a list with name and returns a JSON object of the list"""
     name = request.form.get('name')
     lst = List(name)
     
@@ -20,50 +21,57 @@ def create_list():
 
     return jsonobj(lst)
 
-#Gets all Phones
 @app.route('/entries/getAll', methods=['GET']) #for Testing:
 def getAllEntries():
+    """Returns a list containing all entries in a JSON object"""
     session = Session()
     es = session.query(Entry).all()
     es = jsonobj(es)
     return es
 
-#Gets all Phones
 @app.route('/phones/getAll', methods=['GET']) #for Testing:
 def getAllPhones():
+    """Returns a list containing all phones in a JSON object"""
     session = Session()
     es = session.query(Phone).all()
     es = jsonobj(es)
     return es
 
-#Takes a phone ID and tells you all the entries it is in
-#I think this will be useful because you can find out what lists a specific phone is in
 @app.route('/phones/<phone_id>/allEntries', methods=['GET']) #for Testing:
 def getPhoneEntries(phone_id):
+    """Returns a list in JSON form of all entries containing phone_id"""
     session = Session()
-    es = session.query(Entry).filter_by(phone_id=phone_id).all()
-    es = jsonobj(es)
-    return es
+    try:
+        es = session.query(Entry).filter_by(phone_id=phone_id).all()
+    except: NoresultFound
+        return none
+    else:
+        es = jsonobj(es)
+        return es
 
-#Gets name and number based on phone_id
 @app.route('/phones/<phone_id>', methods=['GET']) #for Testing:
 def getPhoneInfo(phone_id):
+    """Returns a JSON object with the name and number belonging to phone_id"""
     session = Session()
-    es = session.query(Phone).filter_by(phone_id=phone_id).all()
-    es = jsonobj(es)
-    return es
+    try:
+        es = session.query(Phone).filter_by(phone_id=phone_id).all()
+    except: NoresultFound
+        return none
+    else:
+        es = jsonobj(es)
+        return es
 
-#Returns a list of all the Lists in the db
 @app.route('/lists/getAll', methods=['GET']) #for Testing:
 def getLists():
+    """Returns a list of all Lists in the db, in the form of a JSON object"""
     session = Session()
     es = session.query(List).all()
     es = jsonobj(es)
     return es
     
-#Gets all entries in a list
 @app.route('/lists/<list_id>', methods=['GET']) #for Testing:
 def list_list(list_id):
+    """Returns a list of all the entries in list_id, in JSON"""
     session = Session()
     try:
         es = session.query(Entry).filter_by(list_id=list_id).all()
@@ -96,10 +104,10 @@ def get_carriers(phone_id):
         return jsonobj(carriers)
 
     
-#Adds an entry to a list
 @app.route('/lists/<list_id>/add', methods=['POST']) #for Testing:
 def add_user(list_id):
-    
+    """Creates new entry in list_id with number and name. 
+    Returns a JSON object of the entry or an error if it alreayd exists"""
     num = request.form.get('number')
     name = request.form.get('name')
     session = Session()
@@ -125,6 +133,7 @@ def add_user(list_id):
 
 @app.route('/lists/<list_id>/send_email',methods=['POST'])
 def send_text(list_id):
+    """Sends a text via email to all entries in list_id"""
     sender = request.form.get('sender')
     #print sender
     message = request.form.get('message')
@@ -144,6 +153,7 @@ def check_for_bounces():
 
 @app.route('/lists/<list_id>/send_twilio',methods=['POST'])
 def send_text_Twilio(list_id):
+    """Sends a text via the Twilio API to all entries in list_id"""
     sender = request.form.get('sender')
     print sender
     message = request.form.get('message')
