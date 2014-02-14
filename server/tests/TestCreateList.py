@@ -1,7 +1,6 @@
-import unittest
 import json
 
-from textlink import app, create_db, Session, drop_db
+from textlink import Session
 from textlink.models import List, Entry, Phone
 from tests import TextlinkTestCase
 

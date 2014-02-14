@@ -1,10 +1,11 @@
 from flask import request
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
+
 from textlink import app, Session
 from textlink.models import Entry, Phone, List, PhoneCarrier
 from textlink.Obj2JSON import jsonobj
-from textlink.helpers import API
+from textlink.helpers import API, get_or_abort
 from textlink.sources.sendByTwilio import sendSMS
 from textlink.sources.emailgateway import *
 
@@ -21,16 +22,16 @@ def create_list():
 
     return jsonobj(lst)
 
-@app.route('/entries/getAll', methods=['GET']) #for Testing:
-def getAllEntries():
+@app.route('/entries/', methods=['GET']) #for Testing:
+def get_all_entries():
     """Returns a list containing all entries in a JSON object"""
     session = Session()
     es = session.query(Entry).all()
     es = jsonobj(es)
     return es
 
-@app.route('/phones/getAll', methods=['GET']) #for Testing:
-def getAllPhones():
+@app.route('/phones/', methods=['GET']) #for Testing:
+def get_all_phones():
     """Returns a list containing all phones in a JSON object"""
     session = Session()
     es = session.query(Phone).all()
@@ -50,16 +51,12 @@ def getPhoneEntries(phone_id):
         return es
 
 @app.route('/phones/<phone_id>', methods=['GET']) #for Testing:
-def getPhoneInfo(phone_id):
+def get_phone(phone_id):
     """Returns a JSON object with the name and number belonging to phone_id"""
     session = Session()
-    try:
-        es = session.query(Phone).filter_by(phone_id=phone_id).all()
-    except NoResultFound:
-        return none
-    else:
-        es = jsonobj(es)
-        return es
+    es = get_or_abort(Phone, phone_id, session)
+    es = jsonobj(es)
+    return es
 
 @app.route('/lists/getAll', methods=['GET']) #for Testing:
 def getLists():
