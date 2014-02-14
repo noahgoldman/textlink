@@ -43,7 +43,7 @@ def getPhoneEntries(phone_id):
     session = Session()
     try:
         es = session.query(Entry).filter_by(phone_id=phone_id).all()
-    except: NoresultFound
+    except NoResultFound:
         return none
     else:
         es = jsonobj(es)
@@ -55,7 +55,7 @@ def getPhoneInfo(phone_id):
     session = Session()
     try:
         es = session.query(Phone).filter_by(phone_id=phone_id).all()
-    except: NoresultFound
+    except NoResultFound:
         return none
     else:
         es = jsonobj(es)
