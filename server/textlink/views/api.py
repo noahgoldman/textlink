@@ -141,10 +141,11 @@ def send_text(list_id):
     for ent in lst.entries:
         print dir(ent)
         text_by_email(ent.phone.number, sender, message, ent.phone.textemail)
+    return {}
         
 @app.route('/lists/check_for_bounces',methods=['GET'])
 def check_for_bounces():
-    checkMailForBounce()
+    checkForBounces()
     return jsonobj({})
 
 
