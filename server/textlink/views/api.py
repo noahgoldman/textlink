@@ -128,6 +128,15 @@ def add_user(list_id):
     else: 
         return jsonobj(entry)
 
+@app.route('/entries/<entry_id>/delete',methods=['POST'])
+def del_entry(entry_id):
+    session = Session()
+    entry = session.query(Entry).get(entry_id)
+    session.delete(entry)
+    session.commit()
+    #session.query(Entry).filter(Entry.entry_id==entry_id).delete()
+    return "Deleted"
+
 @app.route('/lists/<list_id>/send_email',methods=['POST'])
 def send_text(list_id):
     """Sends a text via email to all entries in list_id"""
