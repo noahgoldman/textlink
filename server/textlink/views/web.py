@@ -2,6 +2,17 @@ from flask import render_template
 
 from textlink import app, Session
 
+from textlink.models import Entry, Phone, List, PhoneCarrier
+
 @app.route('/')
 def index():
-    return render_template('base.html')
+    session= Session()
+    qResults = session.query(Phone).all()
+    # take list ID. display all entries in list 
+    return render_template('example.html', x=qResults)
+
+@app.route('/list/<list_id>')
+def showEntry(list_id):
+    session= Session()
+    qResults = session.query(Entry).filter_by(list_id=list_id).all()
+    return render_template('showEntries.html', x=qResults)

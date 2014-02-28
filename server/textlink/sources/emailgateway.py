@@ -30,36 +30,73 @@ providers = ['%s@message.alltel.com',
 '%s@txt.windmobile.ca']
 
 def find_email_gateway(_to):
-  #  print send_mail('Subject: hello\n\nmessage', 'tmp@micmoo.org', [ '8023422051@vtext.com', '8023422051@txt.att.net' ], 'mail.micmoo.org',25,'normal','tmp@micmoo.org','luigi193') 
+  print send_mail('Subject: hello\n\nmessage', 'tmp@micmoo.org', [ '8023422051@vtext.com', '8023422051@txt.att.net' ], 'mail.micmoo.org',25,'normal','tmp@micmoo.org','luigi193') 
   return ""
   
-
-def checkMailForBounce():
-    mail = imaplib.IMAP4_SSL('mail.micmoo.org')
-    mail.login('textlink@micmoo.org', 'micmoo40')
-    #mail.list()
-    mail.select("inbox") # connect to inbox.
-    result, items = mail.uid('search', None, "ALL") # search and return uids instead
-    items = items[0].split() # getting the mails id
-    session = Session()
-    for emailid in items:
-        resp, data = mail.fetch(emailid, "(RFC822)") #
+  
+class EmailBox(object):
+    current = 0
+    def __init__(self,box):
+        self.mail = imaplib.IMAP4_SSL('mail.micmoo.org')
+        self.email = box + "@micmoo.org"
+        self.mail.login(box + '@micmoo.org', 'micmoo40')
+        self.mail.select("inbox") # connect to inbox.
+        result, self.items = mail.uid('search', None, "ALL") # search and return uids instead
+        self.items = items[0].split() # getting the mails id
+    
+    def next(self):
+        if (len(self.items) == 0):
+            return False
+        emailid = self.items.pop(0)
+        try:
+            resp, data = self.mail.fetch(emailid, "(RFC822)") #
+        except Exception as e:
+            next
         email_body = data[0][1]     
         damail = email.message_from_string(email_body) # parsing the mail content to get a mail object
+        return damail, emailid
+        
+    def parseForReturns(self, damail = 0, emailid = 0 ):
+        if (damail == 0):
+            damail, emailid = self.next()
         fails = scan_message(damail)
-        mail.store(emailid, '+FLAGS', '\\Deleted')
-        if len(fails) == 0: 
-            continue
+        if len(fails) != 0:
+            mail.store(emailid, '+FLAGS', '\\Deleted')
         for fail_s in fails:
             r = session.query(PhoneCarrier).filter_by(email=fail_s).all()
             if len(r) == 0:
                 continue
             r = r[0]
             session.delete(r)
-    session.commit()
-    return None
+        return fails      
+    
+    def parseForResponse(self, damail, emailid):
+        if (damail == 0):
+            damail, emailid = self.next()
+        # Do Email Parsing for Email Responses from Texts.
         
+    def parseReturns():
+        email, emailid = self.next()
+        while (email != False):
+            self.parseForReturns(email, emailid)
+            email, emailid = self.next()
         
+    def parseAll():
+        email, emailid = self.next()
+        while (email != False):
+            self.parseForResponse(email, emailid)
+            email, emailid = self.next()
+        
+    
+def check_for_responces():
+    box = EmailBox("textlink")
+    box.parseAll()
+    
+
+def checkForBounces():
+    box = EmailBox("textlink")
+    box.parseReturns()
+    
 
 def init_possible_carriers(number):
     session = Session()
@@ -70,7 +107,6 @@ def init_possible_carriers(number):
     try:
         for p in providers:
             carrier = PhoneCarrier(phone.phone_id, p.replace('%s', number))
-            print "MIKEY\n"
             session.add(carrier)
         session.commit()
     except Exception ,e:
