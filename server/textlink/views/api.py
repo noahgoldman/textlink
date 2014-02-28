@@ -22,14 +22,6 @@ def create_list():
 
     return jsonobj(lst)
 
-@app.route('/entries/', methods=['GET']) #for Testing:
-def get_all_entries():
-    """Returns a list containing all entries in a JSON object"""
-    session = Session()
-    es = session.query(Entry).all()
-    es = jsonobj(es)
-    return es
-
 @app.route('/phones/', methods=['GET']) #for Testing:
 def get_all_phones():
     """Returns a list containing all phones in a JSON object"""

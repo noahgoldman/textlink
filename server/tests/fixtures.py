@@ -21,3 +21,4 @@ def basic_data(session):
     session.add(e11)
     session.add(e21)
     session.add(e12)
+    session.commit()

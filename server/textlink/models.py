@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, UniqueConstraint, ForeignKeyConstraint, Index, Boolean
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.ext.declarative import declarative_base
 
-from textlink import Base
+Base = declarative_base()
 
 class Entry(Base):
     __tablename__ = 'entries'

@@ -1,8 +1,8 @@
 import unittest
 import os
 
-from textlink import app, create_db, Session, drop_db
 import fixtures
+from textlink import create_db, Session, drop_db, app
 
 class TextlinkTestCase(unittest.TestCase):
 
@@ -14,6 +14,7 @@ class TextlinkTestCase(unittest.TestCase):
 
     def init_db(self):
         os.environ['TEXTLINK_CONFIG'] = 'TESTING'
+        print app.config['DATABASE_URI']
         self.app = app.test_client()
         create_db()
         session = Session()

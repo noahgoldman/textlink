@@ -1,22 +1,29 @@
 import unittest
 import json
+from sqlalchemy import func
+
 from textlink.models import Entry, Phone, List
-from textlink import Obj2JSON
+from textlink import Obj2JSON, Session
 from tests import TextlinkTestCase
 
 class TestObj2JSON(TextlinkTestCase):
 
     def setUp(self):
-        self.mlist = List("derp")
-        self.phone = Phone('derp', '12312')
+        super(TestObj2JSON, self).setUp()
+        session = Session()
+        self.mlist = session.query(List).get(10)
+        self.phone = session.query(Phone).get(0)
 
     def test_get_dict(self):
+        print dir(self.mlist)
         dct = Obj2JSON.get_dict(self.mlist)
 
-        assert len(dct) is 2
+        #print Obj2JSON.jsonobj(self.mlist)
+        #assert len(dct) is 2
         assert 'name' in dct
         assert 'list_id' in dct
         assert 'id' not in dct
+        assert False
     
     def test_get_dict2(self):
         dct = Obj2JSON.get_dict(self.phone)
@@ -54,6 +61,3 @@ class TestObj2JSON(TextlinkTestCase):
         lst = json.loads(json_data)
 
         assert len(lst) is 2
-
-    def tearDown(self):
-        pass

@@ -1,4 +1,7 @@
 import argparse
+import os
+from subprocess import call
+
 from textlink import create_db
 
 def runserver():
@@ -16,6 +19,14 @@ def shell():
     shell.push("from textlink.models import *")
     shell.push("session = Session()")
     shell.interact()
+
+def test():
+    import nose
+    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests')
+    print path
+    os.environ['TEXTLINK_CONFIG'] = 'TESTING'
+    os.chdir(path)
+    call("nosetests")
 
 #---------------------
 # Command Line parsing
@@ -36,6 +47,9 @@ def get_arguments():
 
     shell_parser = subparsers.add_parser("shell")
     shell_parser.set_defaults(func=shell)
+
+    shell_parser = subparsers.add_parser("test")
+    shell_parser.set_defaults(func=test)
 
     args = parser.parse_args()
     args.func()

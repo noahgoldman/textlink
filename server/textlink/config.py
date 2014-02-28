@@ -19,6 +19,7 @@ class Config(object):
     TESTING = True
     DATABASE_URI = 'sqlite:///textlink.db'
 
-
 class Testing(Config):
+    DEBUG = True
+    TESTING = True
     DATABASE_URI = 'sqlite:///'
