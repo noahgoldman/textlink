@@ -4,4 +4,4 @@ python:
     - "pypy"
 install:
     - pip install -r server/requirements.txt
-script: python control.py test
+script: python server/control.py test
