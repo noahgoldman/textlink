@@ -21,9 +21,7 @@ def shell():
     shell.interact()
 
 def test():
-    import nose
     path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tests')
-    print path
     os.environ['TEXTLINK_CONFIG'] = 'TESTING'
     os.chdir(path)
     call("nosetests")

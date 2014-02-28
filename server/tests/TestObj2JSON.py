@@ -11,8 +11,8 @@ class TestObj2JSON(TextlinkTestCase):
     def setUp(self):
         super(TestObj2JSON, self).setUp()
         session = Session()
-        self.mlist = session.query(List).get(10)
-        self.phone = session.query(Phone).get(0)
+        self.mlist = session.query(List).get(1)
+        self.phone = session.query(Phone).get(1)
 
     def test_get_dict(self):
         print dir(self.mlist)
@@ -23,7 +23,6 @@ class TestObj2JSON(TextlinkTestCase):
         assert 'name' in dct
         assert 'list_id' in dct
         assert 'id' not in dct
-        assert False
     
     def test_get_dict2(self):
         dct = Obj2JSON.get_dict(self.phone)
