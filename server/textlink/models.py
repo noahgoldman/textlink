@@ -16,7 +16,7 @@ class Entry(Base):
     phone_id = Column(Integer, ForeignKey('phones.phone_id'))
 
     
-    fields = ['entry_id', 'list_id','phone_id']
+    fields = ['entry_id', 'list_id','phone_id', 'phone']
 
     def __init__(self, lid, pid):
         self.list_id = lid
@@ -49,7 +49,7 @@ class Phone(Base):
     entries = relationship("Entry", backref="phone")
     possible_carriers = relationship("PhoneCarrier", backref="phone")
     
-    fields = ['phone_id', 'number', 'name', 'textemail','possible_carriers']
+    fields = ['phone_id', 'number', 'name', 'textemail', 'possible_carriers', 'entries']
 
     def __init__(self, name, number):
         self.name = name
@@ -62,7 +62,7 @@ class List(Base):
     name = Column(String)
     entries = relationship("Entry", backref="list")
 
-    fields = ['list_id', 'name']
+    fields = ['list_id', 'name', 'entries']
 
     def __init__(self, name):
         self.name = name
