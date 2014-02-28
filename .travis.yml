@@ -4,4 +4,4 @@ python:
     - "pypy"
 install:
     - pip install -r server/requirements.txt
-script: nosetests server
+script: python control.py test
