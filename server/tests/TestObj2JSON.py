@@ -5,7 +5,7 @@ from sqlalchemy import func
 from textlink.models import Entry, Phone, List
 from textlink import Obj2JSON, Session
 from tests import TextlinkTestCase
-from textlink.Obj2JSON import TextlinkJSONEncoder
+from textlink.Obj2JSON import TextlinkJSONEncoder, get_list_type
 
 class TestObj2JSON(TextlinkTestCase):
 
@@ -71,7 +71,7 @@ class TestObj2JSON(TextlinkTestCase):
         lst2 = list(lst)
         lst2.insert(1, 10)
 
-        assert TextlinkJSONEncoder.get_list_type(lst) is str
-        assert not TextlinkJSONEncoder.get_list_type(fail_lst)
-        assert not TextlinkJSONEncoder.get_list_type(fail_lst2)
-        assert not TextlinkJSONEncoder.get_list_type(lst2)
+        assert get_list_type(lst) is str
+        assert not get_list_type(fail_lst)
+        assert not get_list_type(fail_lst2)
+        assert not get_list_type(lst2)

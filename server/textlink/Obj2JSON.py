@@ -15,6 +15,10 @@ def jsonobj(obj, class_tree = None):
 
     return json
 
+def get_list_type(l):
+    typ = reduce(lambda x,y: type(y) if isinstance(y, x) else NoneType, l, object)
+    return typ if typ is not NoneType else None
+
 class TextlinkJSONEncoder(JSONEncoder):
 
     def __init__(self, skipkeys=False, ensure_ascii=True,
@@ -25,8 +29,8 @@ class TextlinkJSONEncoder(JSONEncoder):
 
     def default(self, obj):
         if self.is_model(obj):
-            if self.tl_check_circular(obj):
-                return None
+            #if self.tl_check_circular(obj):
+            #    return None
             model_dict = self.get_dict(obj)
             self.tl_push(obj)
             return model_dict
@@ -51,10 +55,11 @@ class TextlinkJSONEncoder(JSONEncoder):
 
     def tl_check_key_circular(self, obj, key):
         check_obj = getattr(obj, key)
+        typ = type(check_obj)
         if isinstance(check_obj, list):
             typ = get_list_type(check_obj)
             assert typ is not None
-        return self.tl_check_circular(check_obj)
+        return self.tl_check_circular(typ)
 
     def tl_check_circular(self, typ):
         if not isclass(typ):
@@ -67,8 +72,3 @@ class TextlinkJSONEncoder(JSONEncoder):
         except:
             self.used_types = []
             return self.used_types
-
-    @staticmethod
-    def get_list_type(l):
-        typ = reduce(lambda x,y: type(y) if isinstance(y, x) else NoneType, l, object)
-        return typ if typ is not NoneType else None
