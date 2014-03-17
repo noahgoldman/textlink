@@ -1,17 +1,6 @@
 from json import dumps, JSONEncoder
-
-def is_obj(obj):
-    return hasattr(obj, '__dict__') and '_sa_instance_state' in obj.__dict__
-
-def get_dict(obj):
-    assert is_obj(obj)
-
-    new_dict = {}
-    for key in obj.fields:
-        if hasattr(obj, key):
-            new_dict[key] = getattr(obj, key)
-
-    return new_dict
+from inspect import isclass
+from types import NoneType
 
 def jsonobj(obj, class_tree = None):
     json = None
@@ -26,29 +15,33 @@ def jsonobj(obj, class_tree = None):
 
     return json
 
-class ClassTree():
-
-    def __init__(self):
-        self.tree = []
-
-    def push(self, obj):
-        self.tree.push(type(typ))
-
-    def check(self, obj):
-        return type(obj) in self.tree
-
 class TextlinkJSONEncoder(JSONEncoder):
 
+    def __init__(self, skipkeys=False, ensure_ascii=True,
+            check_circular=True, allow_nan=True, sort_keys=False,
+            indent=None, separators=None, encoding='utf-8', default=None):
+        super(TextlinkJSONEncoder, self).__init__(skipkeys, ensure_ascii, False,
+                allow_nan, sort_keys, indent, separators, encoding, default)
+
     def default(self, obj):
-        self.check_circular = False
         if self.is_model(obj):
-            print self.get_types()
             if self.tl_check_circular(obj):
                 return None
-            model_dict = get_dict(obj)
+            model_dict = self.get_dict(obj)
             self.tl_push(obj)
             return model_dict
         return JSONEncoder.default(self, obj)
+
+    def get_dict(self, obj):
+        new_dict = {}
+        for key in obj.fields:
+            if hasattr(obj, key):
+                if self.tl_check_key_circular(obj, key):
+                    print obj
+                else:
+                    new_dict[key] = getattr(obj, key)
+
+        return new_dict
 
     def is_model(self, obj):
         return hasattr(obj, '__dict__') and '_sa_instance_state' in obj.__dict__
@@ -56,8 +49,17 @@ class TextlinkJSONEncoder(JSONEncoder):
     def tl_push(self, obj):
         self.get_types().append(type(obj))
 
-    def tl_check_circular(self, obj):
-        return type(obj) in self.get_types()
+    def tl_check_key_circular(self, obj, key):
+        check_obj = getattr(obj, key)
+        if isinstance(check_obj, list):
+            typ = get_list_type(check_obj)
+            assert typ is not None
+        return self.tl_check_circular(check_obj)
+
+    def tl_check_circular(self, typ):
+        if not isclass(typ):
+            typ = type(typ)
+        return typ in self.get_types()
 
     def get_types(self):
         try:
@@ -65,3 +67,8 @@ class TextlinkJSONEncoder(JSONEncoder):
         except:
             self.used_types = []
             return self.used_types
+
+    @staticmethod
+    def get_list_type(l):
+        typ = reduce(lambda x,y: type(y) if isinstance(y, x) else NoneType, l, object)
+        return typ if typ is not NoneType else None
