@@ -1,4 +1,5 @@
 import os
+from textlink.Obj2JSON import TextlinkJSONEncoder
 
 def get_class_name(obj):
     return obj.__name__
@@ -13,6 +14,7 @@ def load_config(app):
         obj += get_class_name(Config)
 
     app.config.from_object(obj)
+    app.json_encoder = TextlinkJSONEncoder
 
 class Config(object):
     DEBUG = True

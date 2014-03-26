@@ -1,23 +1,26 @@
-from json import dumps, JSONEncoder
-from inspect import isclass
+from flask.json import JSONEncoder
+from inspect import isclass, getmembers
 from types import NoneType
-
-def jsonobj(obj, class_tree = None):
-    json = None
-    if isinstance(obj, list):
-        new_list = []
-        for ob in obj:
-            new_list.append(get_dict(ob))
-        json = dumps(new_list)
-    elif is_obj(obj):
-        new_dict = get_dict(obj)
-        json = dumps(new_dict)
-
-    return json
+from textlink import models
 
 def get_list_type(l):
     typ = reduce(lambda x,y: type(y) if isinstance(y, x) else NoneType, l, object)
     return typ if typ is not NoneType else None
+
+def get_type(obj):
+    if isinstance(obj, list):
+        return get_list_type(obj)
+    return type(obj)
+
+def is_model(obj):
+    classes_tuple = getmembers(models, isclass)
+
+    typ = get_type(obj)
+    
+    for name, cls in classes_tuple:
+        if typ == cls:
+            return True
+    return False
 
 class TextlinkJSONEncoder(JSONEncoder):
 
@@ -28,30 +31,36 @@ class TextlinkJSONEncoder(JSONEncoder):
                 allow_nan, sort_keys, indent, separators, encoding, default)
 
     def default(self, obj):
-        if self.is_model(obj):
-            #if self.tl_check_circular(obj):
-            #    return None
-            model_dict = self.get_dict(obj)
-            self.tl_push(obj)
-            return model_dict
+        try:
+            if is_model(obj):
+                model_dict = self.get_dict(obj)
+                return model_dict
+            iterable = iter(obj)
+        except TypeError:
+            pass
+        else:
+            return list(iterable)
         return JSONEncoder.default(self, obj)
 
     def get_dict(self, obj):
         new_dict = {}
         for key in obj.fields:
             if hasattr(obj, key):
-                if self.tl_check_key_circular(obj, key):
-                    print obj
-                else:
-                    new_dict[key] = getattr(obj, key)
-
+                self.update_dict(new_dict, obj, key)
         return new_dict
 
-    def is_model(self, obj):
-        return hasattr(obj, '__dict__') and '_sa_instance_state' in obj.__dict__
+    def update_dict(self, new_dict, obj, key):
+        sub_obj = getattr(obj, key)
+        if is_model(sub_obj):
+            if self.tl_check_key_circular(obj, key):
+                return
+            self.tl_push(obj, getattr(obj, key))
+        new_dict[key] = getattr(obj, key)
 
-    def tl_push(self, obj):
-        self.get_types().append(type(obj))
+    def tl_push(self, parent, obj):
+        obj_typ = get_type(obj)
+        self.get_types().append(obj_typ)
+        self.get_allowed().append((type(parent), obj_typ))
 
     def tl_check_key_circular(self, obj, key):
         check_obj = getattr(obj, key)
@@ -59,9 +68,9 @@ class TextlinkJSONEncoder(JSONEncoder):
         if isinstance(check_obj, list):
             typ = get_list_type(check_obj)
             assert typ is not None
-        return self.tl_check_circular(typ)
+        return self.tl_check_circular(type(obj), typ)
 
-    def tl_check_circular(self, typ):
+    def tl_check_circular(self, parent_typ, typ):
         if not isclass(typ):
             typ = type(typ)
         return typ in self.get_types()
@@ -72,3 +81,10 @@ class TextlinkJSONEncoder(JSONEncoder):
         except:
             self.used_types = []
             return self.used_types
+
+    def get_allowed(self):
+        try:
+            return self.allowed_types
+        except:
+            self.allowed_types = []
+            return self.allowed_types
