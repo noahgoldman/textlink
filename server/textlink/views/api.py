@@ -100,18 +100,11 @@ def add_user(list_id):
         session.commit()
     except (IntegrityError,InvalidRequestError):
         Session.rollback()
-<<<<<<< HEAD
-        return "Phone already exists for this list"
-    else: 
-        return jsonify(entry)
-=======
         print "Phone already exists for this list"
-        return jsonobj(Struct({'entry_id' : entry.entry_id}))
+        return jsonify(data=Struct({'entry_id' : entry.entry_id}))
     print dumps({"entry_id" : entry.entry_id})
      
     return dumps({"entry_id" : entry.entry_id})
-        #return jsonobj(entry)
->>>>>>> 159b778c7c9a5eea49cea084c7984e1bcf5ed30e
 
 @app.route('/entries/<entry_id>/delete',methods=['POST'])
 def del_entry(entry_id):
@@ -120,7 +113,7 @@ def del_entry(entry_id):
     session.delete(entry)
     session.commit()
     #session.query(Entry).filter(Entry.entry_id==entry_id).delete()
-    return jsonobj(entry)
+    return jsonify(data=entry)
 
 @app.route('/lists/<list_id>/send_email',methods=['POST'])
 def send_text(list_id):
