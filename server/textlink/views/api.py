@@ -1,12 +1,13 @@
 from flask import request, jsonify
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
-
+from json import dumps
 from textlink import app, Session
 from textlink.models import Entry, Phone, List, PhoneCarrier
-from textlink.helpers import get_or_abort
+from textlink.helpers import get_or_abort, Struct
 from textlink.sources.sendByTwilio import sendSMS
 from textlink.sources.emailgateway import *
+
 
 @app.route('/lists', methods=['POST'])
 def create_list():
@@ -54,6 +55,7 @@ def getLists():
     es = jsonify(es)
     return es
     
+<<<<<<< HEAD
 @app.route('/lists/<list_id>', methods=['GET']) #for Testing:
 def list_list(list_id):
     """Returns a list of all the entries in list_id, in JSON"""
@@ -65,6 +67,9 @@ def list_list(list_id):
     else: 
         es = jsonify(es)
         return es
+=======
+
+>>>>>>> 159b778c7c9a5eea49cea084c7984e1bcf5ed30e
 
 @app.route('/phones/', methods=['GET']) #for Testing:
 def get_phones():
@@ -89,7 +94,7 @@ def get_carriers(phone_id):
         return jsonify(carriers)
 
     
-@app.route('/lists/<list_id>/add', methods=['POST']) #for Testing:
+@app.route('/lists/<list_id>/add', methods=['POST'])
 def add_user(list_id):
     """Creates new entry in list_id with number and name. 
     Returns a JSON object of the entry or an error if it alreayd exists"""
@@ -106,15 +111,23 @@ def add_user(list_id):
         init_possible_carriers(num)
     
     entry = Entry(list_id, phone.phone_id)
-    
     try:
         session.add(entry)
         session.commit()
     except (IntegrityError,InvalidRequestError):
         Session.rollback()
+<<<<<<< HEAD
         return "Phone already exists for this list"
     else: 
         return jsonify(entry)
+=======
+        print "Phone already exists for this list"
+        return jsonobj(Struct({'entry_id' : entry.entry_id}))
+    print dumps({"entry_id" : entry.entry_id})
+     
+    return dumps({"entry_id" : entry.entry_id})
+        #return jsonobj(entry)
+>>>>>>> 159b778c7c9a5eea49cea084c7984e1bcf5ed30e
 
 @app.route('/entries/<entry_id>/delete',methods=['POST'])
 def del_entry(entry_id):
@@ -123,7 +136,7 @@ def del_entry(entry_id):
     session.delete(entry)
     session.commit()
     #session.query(Entry).filter(Entry.entry_id==entry_id).delete()
-    return "Deleted"
+    return jsonobj(entry)
 
 @app.route('/lists/<list_id>/send_email',methods=['POST'])
 def send_text(list_id):
