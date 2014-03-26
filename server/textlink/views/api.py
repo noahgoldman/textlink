@@ -55,22 +55,6 @@ def getLists():
     es = jsonify(es)
     return es
     
-<<<<<<< HEAD
-@app.route('/lists/<list_id>', methods=['GET']) #for Testing:
-def list_list(list_id):
-    """Returns a list of all the entries in list_id, in JSON"""
-    session = Session()
-    try:
-        es = session.query(Entry).filter_by(list_id=list_id).all()
-    except NoresultFound:
-        return None
-    else: 
-        es = jsonify(es)
-        return es
-=======
-
->>>>>>> 159b778c7c9a5eea49cea084c7984e1bcf5ed30e
-
 @app.route('/phones/', methods=['GET']) #for Testing:
 def get_phones():
     session = Session()
