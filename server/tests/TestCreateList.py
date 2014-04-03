@@ -13,11 +13,11 @@ class TestCreateList(TextlinkTestCase):
         ))
 
         res_list = json.loads(res.data)
-        assert res_list["name"] == list_name
+        assert res_list["data"]["name"] == list_name
 
         # Check against the database
         session = Session()
-        data_list = session.query(List).get(res_list["list_id"])
+        data_list = session.query(List).get(res_list["data"]["list_id"])
         assert data_list.name == list_name
 
     def test_create_list2(self):
@@ -27,11 +27,11 @@ class TestCreateList(TextlinkTestCase):
         ))
 
         res_list = json.loads(res.data)
-        assert res_list["name"] == list_name2
+        assert res_list["data"]["name"] == list_name2
 
         # Check against the database
         session = Session()
-        data_list = session.query(List).get(res_list["list_id"])
+        data_list = session.query(List).get(res_list["data"]["list_id"])
         assert data_list.name == list_name2
 
     def test_create_existing_list(self):

@@ -13,11 +13,11 @@ class TestGetPhone(TextlinkTestCase):
         assert res.status_code == 200 # check that the server return success
         data = json.loads(res.data)
 
-        assert data['phone_id'] == pid
+        assert data["data"]['phone_id'] == pid
 
         # Get the phone object from the database
         session = Session()
         phone = session.query(Phone).get(pid)
 
-        assert phone.name == data['name']
-        assert phone.number == data['number']
+        assert phone.name == data["data"]['name']
+        assert phone.number == data["data"]['number']

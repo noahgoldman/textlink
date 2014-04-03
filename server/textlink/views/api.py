@@ -1,17 +1,15 @@
-from flask import request
+from flask import request, jsonify
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from json import dumps
 from textlink import app, Session
 from textlink.models import Entry, Phone, List, PhoneCarrier
-from textlink.Obj2JSON import jsonobj
-from textlink.helpers import API, get_or_abort, Struct
+from textlink.helpers import get_or_abort, Struct
 from textlink.sources.sendByTwilio import sendSMS
 from textlink.sources.emailgateway import *
 
 
 @app.route('/lists', methods=['POST'])
-@API
 def create_list():
     """Creates a list with name and returns a JSON object of the list"""
     name = request.form.get('name')
@@ -21,15 +19,15 @@ def create_list():
     session.add(lst)
     session.commit()
 
-    return jsonobj(lst)
+    print app.json_encoder
+    return jsonify(data=lst)
 
 @app.route('/phones/', methods=['GET']) #for Testing:
 def get_all_phones():
     """Returns a list containing all phones in a JSON object"""
     session = Session()
     es = session.query(Phone).all()
-    es = jsonobj(es)
-    return es
+    return jsonify(data=es)
 
 @app.route('/phones/<phone_id>/allEntries', methods=['GET']) #for Testing:
 def getPhoneEntries(phone_id):
@@ -40,27 +38,23 @@ def getPhoneEntries(phone_id):
     except NoResultFound:
         return none
     else:
-        es = jsonobj(es)
-        return es
+        return jsonify(data=es)
 
 @app.route('/phones/<phone_id>', methods=['GET']) #for Testing:
 def get_phone(phone_id):
     """Returns a JSON object with the name and number belonging to phone_id"""
     session = Session()
     es = get_or_abort(Phone, phone_id, session)
-    es = jsonobj(es)
-    return es
+    return jsonify(data=es)
 
 @app.route('/lists/getAll', methods=['GET']) #for Testing:
 def getLists():
     """Returns a list of all Lists in the db, in the form of a JSON object"""
     session = Session()
     es = session.query(List).all()
-    es = jsonobj(es)
+    es = jsonify(es)
     return es
     
-
-
 @app.route('/phones/', methods=['GET']) #for Testing:
 def get_phones():
     session = Session()
@@ -69,7 +63,7 @@ def get_phones():
     except NoresultFound:
         return None
     else: 
-        es = jsonobj(es)
+        es = jsonify(es)
         return es
     
 @app.route('/phones/<phone_id>/carriers', methods=['GET']) #for Testing:
@@ -81,7 +75,7 @@ def get_carriers(phone_id):
         return None
     else: 
         carriers = session.query(PhoneCarrier).filter_by(phone_id=phone_id).all()
-        return jsonobj(carriers)
+        return jsonify(carriers)
 
     
 @app.route('/lists/<list_id>/add', methods=['POST'])
@@ -107,11 +101,10 @@ def add_user(list_id):
     except (IntegrityError,InvalidRequestError):
         Session.rollback()
         print "Phone already exists for this list"
-        return jsonobj(Struct({'entry_id' : entry.entry_id}))
+        return jsonify(data=Struct({'entry_id' : entry.entry_id}))
     print dumps({"entry_id" : entry.entry_id})
      
     return dumps({"entry_id" : entry.entry_id})
-        #return jsonobj(entry)
 
 @app.route('/entries/<entry_id>/delete',methods=['POST'])
 def del_entry(entry_id):
@@ -120,7 +113,7 @@ def del_entry(entry_id):
     session.delete(entry)
     session.commit()
     #session.query(Entry).filter(Entry.entry_id==entry_id).delete()
-    return jsonobj(entry)
+    return jsonify(data=entry)
 
 @app.route('/lists/<list_id>/send_email',methods=['POST'])
 def send_text(list_id):
@@ -140,7 +133,7 @@ def send_text(list_id):
 @app.route('/lists/check_for_bounces',methods=['GET'])
 def check_for_bounces():
     checkForBounces()
-    return jsonobj({})
+    return jsonify({})
 
 
 @app.route('/lists/<list_id>/send_twilio',methods=['POST'])
