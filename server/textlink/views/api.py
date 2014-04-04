@@ -47,7 +47,7 @@ def get_phone(phone_id):
     es = get_or_abort(Phone, phone_id, session)
     return jsonify(data=es)
 
-@app.route('/lists/getAll', methods=['GET']) #for Testing:
+@app.route('/lists/', methods=['GET']) #for Testing:
 def getLists():
     """Returns a list of all Lists in the db, in the form of a JSON object"""
     session = Session()
@@ -128,13 +128,12 @@ def send_text(list_id):
     for ent in lst.entries:
         print dir(ent)
         text_by_email(ent.phone.number, sender, message, ent.phone.textemail)
-    return {}
+    return "success"
         
 @app.route('/lists/check_for_bounces',methods=['GET'])
 def check_for_bounces():
     checkForBounces()
     return jsonify({})
-
 
 @app.route('/lists/<list_id>/send_twilio',methods=['POST'])
 def send_text_Twilio(list_id):
