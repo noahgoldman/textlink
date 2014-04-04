@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}List Index{% endblock %}
+
+{% block content %}
+
+<div id="list_table">
+Lists:
+<table id="lists" border="1" style="width:225px">
+<tr>
+    <td>NAME</td>
+    <td> </td>
+</tr>
+
+{% for lst in lists %}
+<tr>
+    <td>{{ lst.name }}</td>
+    <td> <input data-id="{{ lst.list_id }}" type="button" value="Delete Row" onclick="SomeDeleteRowFunction(this);">
+</td>
+{% endfor %}
+</table>
+</div>
+
+<p>
+<form action="/lists" method="POST" name="form" id="add_list">
+Name: <input type="text" name="name" value=""><br>
+<input type="submit" value="Add">
+</form
+</p>
+
+{% endblock %}
+
+{% block js %}
+<script>
+
+$("#add_list").click(function() {
+    var form = $(this)
+    $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: form.serialize(),
+        error: function(err) {alert(err)},
+    });
+});
+</script>
+{% endblock %}

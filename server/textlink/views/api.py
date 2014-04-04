@@ -5,6 +5,7 @@ from json import dumps
 from textlink import app, Session
 from textlink.models import Entry, Phone, List, PhoneCarrier
 from textlink.helpers import get_or_abort, Struct
+from textlink.models.lists import get_all
 from textlink.sources.sendByTwilio import sendSMS
 from textlink.sources.emailgateway import *
 
@@ -21,6 +22,18 @@ def create_list():
 
     print app.json_encoder
     return jsonify(data=lst)
+
+@app.route('/lists/', methods=['GET']) #for Testing:
+def get_list_index():
+    """Returns a list of all Lists in the db, in the form of a JSON object"""
+    session = Session()
+    return jsonify(lists.get_all(session))
+
+@app.route('/lists/<list_id>/delete', methods=['POST'])
+def list_delete(list_id):
+    session = Session()
+    lst = get_or_abort(List, list_id, session)
+    session.delete(lst)
 
 @app.route('/phones/', methods=['GET']) #for Testing:
 def get_all_phones():
@@ -46,14 +59,6 @@ def get_phone(phone_id):
     session = Session()
     es = get_or_abort(Phone, phone_id, session)
     return jsonify(data=es)
-
-@app.route('/lists/', methods=['GET']) #for Testing:
-def getLists():
-    """Returns a list of all Lists in the db, in the form of a JSON object"""
-    session = Session()
-    es = session.query(List).all()
-    es = jsonify(es)
-    return es
     
 @app.route('/phones/', methods=['GET']) #for Testing:
 def get_phones():
@@ -119,7 +124,6 @@ def del_entry(entry_id):
 def send_text(list_id):
     """Sends a text via email to all entries in list_id"""
     sender = request.form.get('sender')
-    #print sender
     message = request.form.get('message')
     session = Session()
     lst = session.query(List).get(list_id)

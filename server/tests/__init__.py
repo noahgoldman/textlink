@@ -17,8 +17,8 @@ class TextlinkTestCase(unittest.TestCase):
         print app.config['DATABASE_URI']
         self.app = app.test_client()
         create_db()
-        session = Session()
-        fixtures.basic_data(session)
+        self.session = Session()
+        fixtures.basic_data(self.session)
 
     def drop_db(self):
         drop_db()
