@@ -125,13 +125,19 @@ def send_text(list_id):
     """Sends a text via email to all entries in list_id"""
     sender = request.form.get('sender')
     message = request.form.get('message')
+    method = request.form.get('method')
     session = Session()
     lst = session.query(List).get(list_id)
     #attachments = request.form.get('attachments')
     #print message
-    for ent in lst.entries:
-        print dir(ent)
-        text_by_email(ent.phone.number, sender, message, ent.phone.textemail)
+    if method == "email":
+        for ent in lst.entries:
+            print dir(ent)
+            text_by_email(ent.phone.number, sender, message, ent.phone.textemail)
+    else:
+        for entry in lst.entries:
+            print "sent message"
+            sendSMS("AC0955b5ae6e4e14861d9e1f61e7d0680f","a4938640070b8bcaf099093da23676f0", sender, entry.phone.number, message)
     return "success"
         
 @app.route('/lists/check_for_bounces',methods=['GET'])
@@ -153,5 +159,5 @@ def send_text_Twilio(list_id):
     print message
     for entry in lst.entries:
         print "sent message"
-        sendSMS("AC0955b5ae6e4e14861d9e1f61e7d0680f","2dc773f8f669503c2dd6021d8b7bf5b7", sender, entry.phone.number, message)
+        sendSMS("sid placeholder","authkey placeholder", sender, entry.phone.number, message)
     return "hello"
