@@ -24,12 +24,14 @@ Phones:
 Name: <input type="text" name="thename" value=""><br>
 Number: <input type="text" name="thenumber" value=""><br>
 <input type="button" value="Add" onclick="addRow();">
-<input type="button" value="Send Test" onclick="sendText();">
+<br><br>
+Message: <input type="text" name="themessage" value=""><br>
+<input type="button" value="Send Text" onclick="sendText();">
 </form>
 
 <script>
 function sendText(){
-    message = "Test"    
+    message = document.form.themessage.value;    
 
     $.ajax({
     type: 'POST',
