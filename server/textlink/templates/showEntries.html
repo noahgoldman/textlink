@@ -26,8 +26,24 @@ Number: <input type="text" name="thenumber" value=""><br>
 <input type="button" value="Add" onclick="addRow();">
 <br><br>
 Message: <input type="text" name="themessage" value=""><br>
-<input type="button" value="Send Text" onclick="sendText();">
+<input type="button" value="Send Email" onclick="sendText();"><br>
+<input type="button" value="Send Twilio" onclick="sendTwilio();">
 </form>
+
+<script>
+function sendTwilio(){
+    message = document.form.themessage.value;    
+
+    $.ajax({
+    type: 'POST',
+    url: "./" + {{listid}} + "/send_email",
+    data: {"sender": "17324105138", "message": message, "method": "twilio"},
+    success: function (data) { console.log(data) },
+    error : function(e) { console.log(e); alert("Failure"); }
+
+    });
+}
+</script>
 
 <script>
 function sendText(){
@@ -36,7 +52,7 @@ function sendText(){
     $.ajax({
     type: 'POST',
     url: "./" + {{listid}} + "/send_email",
-    data: {"sender": "9086702635", "message": message},
+    data: {"sender": "9086702635", "message": message, "method": "email"},
     success: function (data) { console.log(data) },
     error : function(e) { console.log(e); alert("Failure"); }
 
