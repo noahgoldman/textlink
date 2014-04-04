@@ -13,8 +13,8 @@ Lists:
 
 {% for lst in lists %}
 <tr>
-    <td>{{ lst.name }}</td>
-    <td> <input data-id="{{ lst.list_id }}" type="button" value="Delete Row" onclick="SomeDeleteRowFunction(this);">
+    <td><a href="{{ url_for("list_detail", list_id=lst.list_id) }}">{{ lst.name }}</a></td>
+    <td> <input data-id="{{ lst.list_id }}" type="button" value="Delete Row" class="delete-list">
 </td>
 {% endfor %}
 </table>
@@ -32,7 +32,7 @@ Name: <input type="text" name="name" value=""><br>
 {% block js %}
 <script>
 
-$("#add_list").click(function() {
+$("#add_list").submit(function() {
     var form = $(this)
     $.ajax({
         type: form.attr('method'),
@@ -40,6 +40,18 @@ $("#add_list").click(function() {
         data: form.serialize(),
         error: function(err) {alert(err)},
     });
+    event.preventDefault();
 });
+
+$(".delete-list").click(function() {
+    var btn = $(this)
+    $.ajax({
+        type: 'POST',
+        url: '/lists/' + btn.data("id") + '/delete',
+        success: function(data) { btn.closest("tr").remove() },
+        error: function(err) { alert(err)},
+    });
+});
+    
 </script>
 {% endblock %}

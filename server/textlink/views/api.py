@@ -1,11 +1,11 @@
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from json import dumps
 from textlink import app, Session
 from textlink.models import Entry, Phone, List, PhoneCarrier
 from textlink.helpers import get_or_abort, Struct
-from textlink.models.lists import get_all
+from textlink.models import lists
 from textlink.sources.sendByTwilio import sendSMS
 from textlink.sources.emailgateway import *
 
@@ -32,8 +32,9 @@ def get_list_index():
 @app.route('/lists/<list_id>/delete', methods=['POST'])
 def list_delete(list_id):
     session = Session()
-    lst = get_or_abort(List, list_id, session)
-    session.delete(lst)
+    if not lists.delete(session, list_id):
+        abort(404)
+    return ""
 
 @app.route('/phones/', methods=['GET']) #for Testing:
 def get_all_phones():

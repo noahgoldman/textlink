@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, UniqueConstraint, ForeignKeyConstraint, Index, Boolean
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
+import bcrypt
+import uuid
 
 Base = declarative_base()
 
@@ -66,3 +68,28 @@ class List(Base):
 
     def __init__(self, name):
         self.name = name
+
+class User(Base):
+    __tablename__ = 'users'
+
+    user_id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True)
+    password = Column(String)
+
+    def __init__(self, name, password):
+        self.name = name
+        self.password = bcrypt.hashpw(password, bcrypt.gensalt(12))
+
+    def check_pass(self, passw):
+        return bcrypt.hashpw(passw, self.password) == self.password
+
+class Key(Base):
+    __tablename__ = 'keys'
+
+    key_id = Column(Integer, primary_key=True)
+    secret = Column(String)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+
+    def __init__(self, user):
+        self.user_id = user.user_id
+        self.secret = uuid.uuid4().hex
