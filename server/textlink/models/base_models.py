@@ -3,6 +3,9 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 import bcrypt
 import uuid
+import hmac
+import hashlib
+import base64
 
 Base = declarative_base()
 
@@ -93,3 +96,8 @@ class Key(Base):
     def __init__(self, user):
         self.user_id = user.user_id
         self.secret = uuid.uuid4().hex
+
+    def check_signature(self, msg, signature):
+        hash = hmac.new(bytes(self.secret), bytes(msg), hashlib.sha256).digest()
+        encoded = base64.encodestring(hash).strip()
+        return signature == encoded

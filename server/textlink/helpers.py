@@ -1,8 +1,14 @@
-from flask import abort
+from flask import abort, request
+from functools import wraps
 
 def get_or_abort(model, obj_id, session, code=404):
     res = session.query(model).get(obj_id)
     return res or abort(code)
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
 
 
 class Struct(object):

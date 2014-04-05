@@ -20,7 +20,7 @@ def create_list():
     session.add(lst)
     session.commit()
 
-    print app.json_encoder
+    print request.url
     return jsonify(data=lst)
 
 @app.route('/lists/', methods=['GET']) #for Testing:

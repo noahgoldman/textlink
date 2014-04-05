@@ -12,6 +12,7 @@ def create(session, name, password):
     except IntegrityError:
         session.rollback()
         raise
+    return user
 
 def auth(session, name, password):
     user = session.query(User).filter(User.name == name).one()

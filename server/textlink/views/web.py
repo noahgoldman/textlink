@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, request
 
 from textlink import app, Session
 
@@ -14,6 +14,7 @@ def index():
 
 @app.route('/web/lists/<list_id>')
 def list_detail(list_id):
+    print request.url
     session= Session()
     res = session.query(Entry).filter_by(list_id=list_id).all()
     return render_template('showEntries.html', x=res, listid=list_id)

@@ -5,8 +5,10 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from textlink.config import load_config
 from textlink.models import Base
+from textlink.middleware import WSGISaveData
 
 app = Flask(__name__)
+app.wsgi_app = WSGISaveData(app.wsgi_app)
 load_config(app)
 engine = create_engine(app.config['DATABASE_URI'], echo=True, convert_unicode=True)
 

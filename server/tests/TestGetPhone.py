@@ -11,6 +11,7 @@ class TestGetPhone(TextlinkTestCase):
         res = self.app.get('/phones/%d' % pid)
 
         assert res.status_code == 200 # check that the server return success
+        print "The data is " + res.data
         data = json.loads(res.data)
 
         assert data["data"]['phone_id'] == pid
